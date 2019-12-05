@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace ProjetoAutenticacao.Controllers
 {
     [ApiController]
-    [Route("/Controller")]
+    [Route("[controller]")]
     public class UserController : Controller
     {
         public UserController(Context db)
@@ -26,12 +26,21 @@ namespace ProjetoAutenticacao.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
+            //teste
+            var userDb = _db.Users.FirstOrDefault(x => x.Login == user.Login);
+            var valid = CryptographyHandler.VerifyMd5Hash(user.Password, userDb.Password);
+
             var passwd = CryptographyHandler.GetMd5Hash(user.Password);
+
             var userModel = new TUser
             {
                  Login = user.Login,
                  Password = passwd
             };
+
+            _db.Users.Add(userModel);
+
+            await _db.SaveChangesAsync();
 
             return Created("",null);
         }
