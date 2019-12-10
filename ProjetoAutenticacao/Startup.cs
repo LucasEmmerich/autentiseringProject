@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjetoAutenticacao.DatabaseContext;
+using ProjetoAutenticacao.Security;
+using ProjetoAutenticacao.Services;
 
 namespace ProjetoAutenticacao
 {
@@ -24,6 +26,8 @@ namespace ProjetoAutenticacao
         {
             services.AddControllers();
             services.AddDbContext<Context>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<AuthService>();
+            services.AddMvc(o => o.EnableEndpointRouting = false);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -73,9 +77,22 @@ namespace ProjetoAutenticacao
             app.UseAuthentication();
             app.UseAuthorization();
 
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c => 
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Autentisering Project");
             });
         }
     }
