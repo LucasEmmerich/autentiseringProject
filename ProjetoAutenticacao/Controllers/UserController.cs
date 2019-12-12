@@ -26,10 +26,6 @@ namespace ProjetoAutenticacao.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            //teste
-            var userDb = _db.Users.FirstOrDefault(x => x.Login == user.Login);
-            var valid = CryptographyHandler.VerifyMd5Hash(user.Password, userDb.Password);
-
             var passwd = CryptographyHandler.GetMd5Hash(user.Password);
 
             var userModel = new TUser

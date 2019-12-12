@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,11 @@ namespace ProjetoAutenticacao.Helpers
 {
     public static class RequestHelper
     {
-        public static string GetAppId(this Controller controller)
+        public static string GetAppId(this Controller httpContext)
         {
-            return controller.HttpContext.Request.Headers["AppId"].FirstOrDefault();
+            //implementar
+            var a = httpContext.Request.Headers ;
+            return null;
         }
     }
 }

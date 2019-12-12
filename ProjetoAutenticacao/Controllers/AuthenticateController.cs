@@ -32,7 +32,8 @@ namespace ProjetoAutenticacao.Controllers
         [HttpPost]
         public async Task<object> UserAuthentication([FromBody]User user)
         {
-            var app = await _db.Aplicativos.SingleOrDefaultAsync(x => x.AppId == this.GetAppId());
+            var a = this.HttpContext.GetAppId();
+            var app = await _db.Aplicativos.SingleOrDefaultAsync(x => x.AppId == this.HttpContext.GetAppId());
 
             if(app == null) return Unauthorized("Aplicativo não identificado!");
 

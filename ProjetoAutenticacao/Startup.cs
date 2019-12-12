@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -32,7 +34,7 @@ namespace ProjetoAutenticacao
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(j=> 
+            }).AddJwtBearer(j =>
             {
                 j.RequireHttpsMetadata = false;
                 j.SaveToken = true;
@@ -44,9 +46,9 @@ namespace ProjetoAutenticacao
                     ValidateAudience = false
                 };
             });
-            services.AddSwaggerGen(c => 
+            services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("Autentisering", new OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Contact = new OpenApiContact
                     {
@@ -56,8 +58,25 @@ namespace ProjetoAutenticacao
                     },
                     Description = "Serviço de Autenticação",
                     Title = "Autentisering Project",
-                    Version = "v1.0"
+                    Version = "v1"
                 });
+                c.AddSecurityDefinition("Authorization",
+                    new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "O token de autenticação deve ser mandado no cabeçalho da requisição!",
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey
+                    });
+                c.AddSecurityDefinition("AppId",
+                    new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "A identificação do aplicativo deve ser mandada no cabeçalho da requisição apenas !",
+                        Name = "AppId",
+                        Type = SecuritySchemeType.ApiKey
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement());
             });
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -74,10 +93,6 @@ namespace ProjetoAutenticacao
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
@@ -87,12 +102,14 @@ namespace ProjetoAutenticacao
             {
                 endpoints.MapControllers();
             });
-            
+
+
             app.UseSwagger();
 
-            app.UseSwaggerUI(c => 
+            app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Autentisering Project");
+                c.RoutePrefix = string.Empty;
             });
         }
     }
