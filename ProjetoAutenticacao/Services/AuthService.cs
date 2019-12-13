@@ -21,7 +21,9 @@ namespace ProjetoAutenticacao.Services
         private readonly Context _db;
         public async Task<Token> Authenticate(string username, string password, string appId)
         {
-            var user = _db.Users.SingleOrDefault(x => x.Login == username && CryptographyHandler.VerifyMd5Hash(password,x.Password));
+            var user = _db.Users.SingleOrDefault(x => x.Login == username);
+
+            if (!CryptographyHandler.VerifyMd5Hash(password, user.Password)) return null;
 
             var app = _db.Aplicativos.SingleOrDefault(x => x.AppId == appId);
 

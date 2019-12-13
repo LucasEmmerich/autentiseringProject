@@ -3,6 +3,7 @@ using ProjetoAutenticacao.DatabaseContext;
 using ProjetoAutenticacao.DatabaseContext.Models;
 using ProjetoAutenticacao.Models;
 using ProjetoAutenticacao.Security;
+using ProjetoAutenticacao.Security.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace ProjetoAutenticacao.Controllers
             _db = db;
         }
         private readonly Context _db;
+        [AuthCheck]
         [HttpPost]
         public async Task<object> Post([FromBody]User user)
         {

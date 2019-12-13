@@ -11,9 +11,8 @@ namespace ProjetoAutenticacao.Helpers
     {
         public static string GetAppId(this Controller httpContext)
         {
-            //implementar
-            var a = httpContext.Request.Headers ;
-            return null;
+            var appId = httpContext.Request.Headers["AppId"].FirstOrDefault() ;
+            return appId;
         }
     }
 }

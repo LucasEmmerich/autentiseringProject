@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjetoAutenticacao.DatabaseContext;
 using ProjetoAutenticacao.Security;
+using ProjetoAutenticacao.Security.Authorization;
 using ProjetoAutenticacao.Services;
 
 namespace ProjetoAutenticacao
@@ -29,7 +30,11 @@ namespace ProjetoAutenticacao
             services.AddControllers();
             services.AddDbContext<Context>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<AuthService>();
-            services.AddMvc(o => o.EnableEndpointRouting = false);
+            services.AddMvc(o =>
+            {
+                o.Filters.Add(typeof(AuthorizationFilter));
+                o.EnableEndpointRouting = false;
+            });
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,14 +73,14 @@ namespace ProjetoAutenticacao
                         Name = "Authorization",
                         Type = SecuritySchemeType.ApiKey
                     });
-                c.AddSecurityDefinition("AppId",
-                    new OpenApiSecurityScheme
-                    {
-                        In = ParameterLocation.Header,
-                        Description = "A identificação do aplicativo deve ser mandada no cabeçalho da requisição apenas !",
-                        Name = "AppId",
-                        Type = SecuritySchemeType.ApiKey
-                    });
+                //c.AddSecurityDefinition("AppId",
+                //    new OpenApiSecurityScheme
+                //    {
+                //        In = ParameterLocation.Header,
+                //        Description = "A identificação do aplicativo deve ser mandada no cabeçalho da requisição apenas !",
+                //        Name = "AppId",
+                //        Type = SecuritySchemeType.Http
+                //    });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement());
             });
         }
