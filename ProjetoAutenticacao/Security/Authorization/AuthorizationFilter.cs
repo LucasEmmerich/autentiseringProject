@@ -3,18 +3,33 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ProjetoAutenticacao.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using ProjetoAutenticacao.Services;
+using ProjetoAutenticacao.Enums;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace ProjetoAutenticacao.Security.Authorization
 {
     public class AuthorizationFilter:ActionFilterAttribute
     {
+        public AuthorizationFilter(AuthService authService)
+        {
+            _authService = authService;
+        }
+        private readonly AuthService _authService;
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (!context.Filters.Any(x => x.GetType() == typeof(AuthCheckAttribute))) return;
+            bool haveAuthAttr = ((ControllerActionDescriptor)context.ActionDescriptor).MethodInfo.CustomAttributes.Any(x => x.AttributeType == typeof(AuthCheckAttribute));//pega attrbutes do método por reflexao
 
-            //implementar autenticacao do token
+            if (!haveAuthAttr) return;
 
-            base.OnActionExecuting(context);
+            var token = ((Controller)context.Controller).GetTokenOfHeader();
+
+            StatusTokenEnum status = _authService.CheckTokenAsync(token).Result;
+
+            if (status == StatusTokenEnum.Inválido || status == StatusTokenEnum.Expirado) context.Result = new UnauthorizedResult();
         }
     }
 }

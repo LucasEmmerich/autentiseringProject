@@ -21,12 +21,15 @@ namespace ProjetoAutenticacao.Controllers
             _db = db;
         }
         private readonly Context _db;
+
         [AuthCheck]
         [HttpPost]
         public async Task<object> Post([FromBody]User user)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
+
+            if (_db.Users.Any(x => x.Login == user.Login)) return BadRequest("Login já existente.");
 
             var passwd = CryptographyHandler.GetMd5Hash(user.Password);
 

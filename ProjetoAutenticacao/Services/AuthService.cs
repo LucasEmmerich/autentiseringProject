@@ -1,6 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ProjetoAutenticacao.DatabaseContext;
 using ProjetoAutenticacao.DatabaseContext.Models;
+using ProjetoAutenticacao.Enums;
 using ProjetoAutenticacao.Models;
 using ProjetoAutenticacao.Security;
 using System;
@@ -57,9 +59,16 @@ namespace ProjetoAutenticacao.Services
             return new Token(token,(int)expires.Subtract(DateTime.Now).TotalSeconds);
         }
 
-        //public async Task<object> Authenticate(string cnpj,string appId)
-        //{
+        public async Task<StatusTokenEnum> CheckTokenAsync(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return StatusTokenEnum.Inválido;
 
-        //}
+
+            var tokenDb = await _db.Tokens.FirstOrDefaultAsync(x => x.Token == token);
+            if (tokenDb == null) return StatusTokenEnum.Inválido;
+            if (tokenDb != null && tokenDb.Validade < DateTime.Now) return StatusTokenEnum.Expirado;
+
+            return StatusTokenEnum.Válido;
+        }
     }
 }

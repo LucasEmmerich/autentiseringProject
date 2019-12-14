@@ -23,11 +23,6 @@ namespace ProjetoAutenticacao.Controllers
         }
         private readonly Context _db;
         private readonly AuthService _auth;
-        //[HttpPost("{empresa}")]
-        //public async Task<object> EmpresaAuthentication([FromBody]Empresa emp)
-        //{
-
-        //}
 
         [HttpPost]
         public async Task<object> UserAuthentication([FromBody]User user,[FromHeader]string appId)
