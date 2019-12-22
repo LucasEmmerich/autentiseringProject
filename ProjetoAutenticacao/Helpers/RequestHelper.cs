@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjetoAutenticacao.Helpers
 {
@@ -14,10 +11,13 @@ namespace ProjetoAutenticacao.Helpers
             var appId = httpContext.Request.Headers["AppId"].FirstOrDefault();
             return appId;
         }
-        public static string GetTokenOfHeader(this Controller httpContext)
+        public static JwtSecurityToken GetTokenOfHeader(this Controller httpContext)
         {
-            var token = httpContext.Request.Headers["authorization"].FirstOrDefault();
-            return token;
+            var token = httpContext.Request.Headers["Authorization"].FirstOrDefault();
+            if (token == null) return null; 
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            return tokenHandler.ReadJwtToken(token);
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using ProjetoAutenticacao.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using ProjetoAutenticacao.Services;
 using ProjetoAutenticacao.Enums;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using ProjetoAutenticacao.Helpers;
 
 namespace ProjetoAutenticacao.Security.Authorization
 {

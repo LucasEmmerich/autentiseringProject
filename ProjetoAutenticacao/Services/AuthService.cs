@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using ProjetoAutenticacao.DatabaseContext;
 using ProjetoAutenticacao.DatabaseContext.Models;
 using ProjetoAutenticacao.Enums;
+using ProjetoAutenticacao.TokenModels;
 using ProjetoAutenticacao.Models;
 using ProjetoAutenticacao.Security;
 using System;
@@ -59,8 +60,9 @@ namespace ProjetoAutenticacao.Services
             return new Token(token,(int)expires.Subtract(DateTime.Now).TotalSeconds);
         }
 
-        public async Task<StatusTokenEnum> CheckTokenAsync(string token)
+        public async Task<StatusTokenEnum> CheckTokenAsync(JwtSecurityToken jwtToken)
         {
+            var token = jwtToken.RawData;
             if (string.IsNullOrWhiteSpace(token)) return StatusTokenEnum.Inválido;
 
 
