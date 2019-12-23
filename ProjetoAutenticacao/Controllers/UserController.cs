@@ -4,6 +4,7 @@ using ProjetoAutenticacao.DatabaseContext.Models;
 using ProjetoAutenticacao.Models;
 using ProjetoAutenticacao.Security;
 using ProjetoAutenticacao.Security.Authorization;
+using ProjetoAutenticacao.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +17,13 @@ namespace ProjetoAutenticacao.Controllers
     [Route("[controller]")]
     public class UserController : Controller
     {
-        public UserController(Context db)
+        public UserController(Context db,CadastroService cadService)
         {
             _db = db;
+            _cadastroService = cadService;
         }
         private readonly Context _db;
+        private readonly CadastroService _cadastroService;
 
         [AuthCheck]
         [HttpPost]
@@ -29,19 +32,11 @@ namespace ProjetoAutenticacao.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            if (_db.Users.Any(x => x.Login == user.Login)) return BadRequest("Login já existente.");
+            if (_db.Users.Any(x => x.Login == user.Login)) return BadRequest("Nome de Usuário já cadastrado.");
 
-            var passwd = CryptographyHandler.GetMd5Hash(user.Password);
+            user.Password = CryptographyHandler.GetMd5Hash(user.Password);
 
-            var userModel = new TUser
-            {
-                 Login = user.Login,
-                 Password = passwd
-            };
-
-            _db.Users.Add(userModel);
-
-            await _db.SaveChangesAsync();
+            await _cadastroService.CadastrarUsuario(user);
 
             return Created("",null);
         }

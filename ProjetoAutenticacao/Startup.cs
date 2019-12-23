@@ -28,6 +28,7 @@ namespace ProjetoAutenticacao
             services.AddControllers();
             services.AddDbContext<Context>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<AuthService>();
+            services.AddScoped<CadastroService>();
             services.AddMvc(o =>
             {
                 o.Filters.Add(typeof(AuthorizationFilter));

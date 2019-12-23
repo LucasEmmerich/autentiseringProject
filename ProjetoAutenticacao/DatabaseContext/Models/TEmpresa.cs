@@ -8,6 +8,6 @@ namespace ProjetoAutenticacao.DatabaseContext.Models
         public string RazaoSocial { get; set; }
         public string CNPJ { get; set; }
         public bool Excluido { get; set; }
-        public DateTime DataCriacao { get; set; }
+        public DateTime DataCriacao { get; set; } = DateTime.Now;
     }
 }

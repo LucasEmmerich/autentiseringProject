@@ -9,6 +9,7 @@ namespace ProjetoAutenticacao.DatabaseContext
         public Context(DbContextOptions o) : base(o) { }
 
         public DbSet<TUser> Users { get; set; }
+        public DbSet<TPessoa> Pessoas { get; set; }
         public DbSet<TEmpresa> Empresas { get; set; }
         public DbSet<TAplicativo> Aplicativos { get; set; }
         public DbSet<TToken> Tokens { get; set; }
@@ -17,6 +18,19 @@ namespace ProjetoAutenticacao.DatabaseContext
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.HasDefaultSchema("Autenticacao");
+            builder.Entity<TPessoa>(o =>
+            {
+                o.ToTable("TPessoaSet");
+                o.Property(e => e.Id).ValueGeneratedOnAdd();
+                o.HasKey("Id");
+                o.Property(e => e.Nome).IsRequired();
+                o.Property(e => e.Telefone).IsRequired();
+                o.Property(e => e.Email);
+                o.Property(e => e.CpfCnpj).IsRequired();
+                o.HasOne(e => e.Usuario).WithOne(e => e.Pessoa).HasForeignKey<TUser>(e => e.Pessoa_Id);
+                o.Property(e => e.Excluido).HasColumnType("TINYINT").HasDefaultValue(false);
+                o.Property(e => e.DataCriacao).HasColumnType("DATETIME");
+            });
             builder.Entity<TUser>(o =>
             {
                 o.ToTable("TUserSet");
@@ -25,7 +39,7 @@ namespace ProjetoAutenticacao.DatabaseContext
                 o.Property(e => e.Login).IsRequired();
                 o.Property(e => e.Password).IsRequired();
                 o.Property(e => e.Excluido).HasColumnType("TINYINT").HasDefaultValue(false);
-                o.Property(e => e.DataCriacao).HasColumnType("DATETIME").HasDefaultValue(DateTime.Now);
+                o.Property(e => e.DataCriacao).HasColumnType("DATETIME");
             });
             builder.Entity<TEmpresa>(o =>
             {
@@ -35,7 +49,7 @@ namespace ProjetoAutenticacao.DatabaseContext
                 o.Property(e => e.CNPJ).IsRequired();
                 o.Property(e => e.RazaoSocial).IsRequired();
                 o.Property(e => e.Excluido).HasColumnType("TINYINT").HasDefaultValue(false);
-                o.Property(e => e.DataCriacao).HasColumnType("DATETIME").HasDefaultValue(DateTime.Now);
+                o.Property(e => e.DataCriacao).HasColumnType("DATETIME");
             });
             builder.Entity<TToken>(o =>
             {
@@ -43,7 +57,6 @@ namespace ProjetoAutenticacao.DatabaseContext
                 o.Property(e => e.Id).ValueGeneratedOnAdd();
                 o.HasKey("Id");
                 o.Property(e => e.Token).IsRequired();
-                o.Property(e => e.Validade).HasColumnType("DATETIME").IsRequired();
             });
             builder.Entity<TAplicativo>(o =>
             {

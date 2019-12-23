@@ -54,9 +54,7 @@ namespace ProjetoAutenticacao.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("DataCriacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIME")
-                        .HasDefaultValue(new DateTime(2019, 12, 9, 19, 0, 26, 111, DateTimeKind.Local).AddTicks(2216));
+                        .HasColumnType("DATETIME");
 
                     b.Property<sbyte>("Excluido")
                         .ValueGeneratedOnAdd()
@@ -72,6 +70,40 @@ namespace ProjetoAutenticacao.Migrations
                     b.ToTable("TEmpresaSet");
                 });
 
+            modelBuilder.Entity("ProjetoAutenticacao.DatabaseContext.Models.TPessoa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("CpfCnpj")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("DATETIME");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<sbyte>("Excluido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TINYINT")
+                        .HasDefaultValue((sbyte)0);
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TPessoaSet");
+                });
+
             modelBuilder.Entity("ProjetoAutenticacao.DatabaseContext.Models.TToken", b =>
                 {
                     b.Property<int>("Id")
@@ -83,7 +115,7 @@ namespace ProjetoAutenticacao.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<DateTime>("Validade")
-                        .HasColumnType("DATETIME");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
@@ -97,9 +129,7 @@ namespace ProjetoAutenticacao.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DataCriacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIME")
-                        .HasDefaultValue(new DateTime(2019, 12, 9, 19, 0, 26, 97, DateTimeKind.Local).AddTicks(2060));
+                        .HasColumnType("DATETIME");
 
                     b.Property<sbyte>("Excluido")
                         .ValueGeneratedOnAdd()
@@ -114,9 +144,24 @@ namespace ProjetoAutenticacao.Migrations
                         .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
+                    b.Property<int>("Pessoa_Id")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("Pessoa_Id")
+                        .IsUnique();
+
                     b.ToTable("TUserSet");
+                });
+
+            modelBuilder.Entity("ProjetoAutenticacao.DatabaseContext.Models.TUser", b =>
+                {
+                    b.HasOne("ProjetoAutenticacao.DatabaseContext.Models.TPessoa", "Pessoa")
+                        .WithOne("Usuario")
+                        .HasForeignKey("ProjetoAutenticacao.DatabaseContext.Models.TUser", "Pessoa_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
