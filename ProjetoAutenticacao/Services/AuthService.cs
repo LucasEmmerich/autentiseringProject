@@ -22,9 +22,9 @@ namespace ProjetoAutenticacao.Services
             _db = db;
         }
         private readonly Context _db;
-        public async Task<Token> Authenticate(string username, string password, string appId)
+        public async Task<UserWithToken> Authenticate(string username, string password, string appId)
         {
-            var user = _db.Users.SingleOrDefault(x => x.Login == username);
+            var user = _db.Users.Include(x=>x.Pessoa).SingleOrDefault(x => x.Login == username);
 
             if (!CryptographyHandler.VerifyMd5Hash(password, user.Password)) return null;
 
@@ -41,7 +41,11 @@ namespace ProjetoAutenticacao.Services
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                     new Claim("id",user.Id.ToString()),
-                    new Claim("login",user.Login.ToString())
+                    new Claim("login",user.Login.ToString()),
+                    new Claim("nome",user.Pessoa.Nome),
+                    new Claim("cpfcnpj",user.Pessoa.CpfCnpj),
+                    new Claim("email",user.Pessoa.Email),
+                    new Claim("telefone",user.Pessoa.Telefone)
                 }),
                 Expires = expires,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -57,7 +61,16 @@ namespace ProjetoAutenticacao.Services
 
             await _db.SaveChangesAsync();
 
-            return new Token(token,(int)expires.Subtract(DateTime.Now).TotalSeconds);
+            var tokenUser = new User
+            {
+                Nome = user.Pessoa.Nome,
+                CpfCnpj = user.Pessoa.CpfCnpj,
+                Email = user.Pessoa.Email,
+                Login = user.Login,
+                Telefone = user.Pessoa.Telefone
+            };
+
+            return new UserWithToken(token,(int)expires.Subtract(DateTime.Now).TotalSeconds, tokenUser);
         }
 
         public async Task<StatusTokenEnum> CheckTokenAsync(JwtSecurityToken jwtToken)

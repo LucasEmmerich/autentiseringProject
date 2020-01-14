@@ -32,7 +32,6 @@ namespace ProjetoAutenticacao.Services
                 Pessoa = pessoaModel             
             };
 
-            _db.Pessoas.Add(pessoaModel);
             _db.Users.Add(userModel);
 
             await _db.SaveChangesAsync();

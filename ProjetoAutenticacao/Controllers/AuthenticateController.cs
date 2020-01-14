@@ -34,11 +34,11 @@ namespace ProjetoAutenticacao.Controllers
 
             if(app == null) return Unauthorized("Aplicativo não identificado!");
 
-            var token = await _auth.Authenticate(user.Login, user.Password,app.AppId);
+            var userWithToken = await _auth.Authenticate(user.Login, user.Password,app.AppId);
 
-            if (token == null) return Unauthorized("Login ou senha incorretos ou Usuários não cadastrados!");
+            if (userWithToken == null) return Unauthorized("Login ou senha incorretos ou Usuários não cadastrados!");
 
-            else return Ok(token);
+            else return Ok(userWithToken);
 
         }
     
