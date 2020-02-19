@@ -38,7 +38,7 @@ namespace ProjetoAutenticacao.Controllers
 
             if (userWithToken == null) return Unauthorized("Login ou senha incorretos ou Usuários não cadastrados!");
 
-            else return Ok(userWithToken);
+            else return Ok(userWithToken) ;
 
         }
     
